@@ -1,4 +1,5 @@
 #!/bin/bash
+#source ./check.sh
 
 ## Colors variables for the script
 RED='\033[1;91m' # WARNINGS
@@ -24,7 +25,7 @@ nym_network_debugger.sh 0.0.1 (2023-29-06)
 Framework of tools for debugging Nym mixnet and its clients
 
 USAGE:
-  
+  -r: Run the socks5-client  
   -t: Set the target host
   -c: Use curl for the tests
   -n: Use ncat for the tests
@@ -33,17 +34,19 @@ USAGE:
   -n: Set the number of tests to run (default is 100)
   -o: Write the results to a file
   -h: Display this help message
+  -i 	--install ##  checkpoint script for configs and other stuff
 
 EOF
 }
 
 # display usage if the script is not run as root user
-if [[ $USER != "root" ]]; then
-    printf "%b\n\n\n" "${WHITE} This script must be run as ${YELLOW} root ${WHITE} or with ${YELLOW} sudo!${NOCOLOR}"
-    exit 1
-fi
+#if [[ $USER != "root" ]]; then
+#    printf "%b\n\n\n" "${WHITE} This script must be run as ${YELLOW} root ${WHITE} or with ${YELLOW} sudo!${NOCOLOR}"
+#    exit 1
+#fi
 
 # Function to check dependencies
+
 check_dependencies() {
   for cmd in $@; do
     if ! command -v $cmd &> /dev/null; then
@@ -117,11 +120,25 @@ done
 check_dependencies curl ncat iperf bc
 check_python
 
+#Run client if not running
+if [[ "$?" = "-r" ]]; then check_port_ocupied; fi
+
 #Redirect output to file if specified
 
 if [[ -n $output_file ]]; then
 exec > $output_file
 fi
+## checkpoint script for configs and other stuff
+#if [[ $1 -eq "-i" || $1 -eq "--install" ]]; then source ./check.sh;fi
+if [[ "$1" = "--install" ||  "$1" = "-i" ]]; then
+    source ./check.sh
+    check_in_path $2
+    check_dir_exists $3
+    check_port_occupied
+    download_nym_socks5_client $4
+    check_id_dir_exists $5 $6
+fi
+#if [[ ("$1" = "--install") ||  "$1" = "-i" ]]; then source ./check.sh;fi
 
 #Run tests
 
