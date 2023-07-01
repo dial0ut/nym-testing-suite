@@ -68,7 +68,9 @@ check_port_occupied() {
     echo -e "${WHITE}Port 1080 is free${NOCOLOR}."
     echo
     echo -e "${WHITE} Gonna try to start the client ... if you do not want this, press CTRL+C"
-    echo 
+    echo -e "${WHITE}Here is a list of your ids ..."
+    ls $HOME/.nym/socks5-clients/
+    echo "------"
     read -p "id of the client?" client_id
     echo -e "${LGREEN} STARTING THE ${RED}NYM-SOCKS5-CLIENT !!!"
     echo
